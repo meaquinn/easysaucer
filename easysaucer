@@ -1,1 +1,76 @@
-d
+import itertools
+
+point_values = {
+    6: 10000,
+    7: 36,
+    8: 720,
+    9: 360,
+    10: 80,
+    11: 252,
+    12: 108,
+    13: 72,
+    14: 54,
+    15: 180,
+    16: 72,
+    17: 180,
+    18: 119,
+    19: 36,
+    20: 360,
+    21: 1080,
+    22: 144,
+    23: 1800,
+    24: 3600
+}
+
+def calculate_sum(combination):
+    return sum(combination)
+
+def calculate_expected_value(combination, unknown_indices, available_numbers):
+    total = 0
+    for numbers in itertools.permutations(available_numbers, len(unknown_indices)):
+        temp_combination = list(combination)
+        for i, index in enumerate(unknown_indices):
+            temp_combination[index] = numbers[i]
+        total += point_values[calculate_sum(temp_combination)]
+    return total / len(list(itertools.permutations(available_numbers, len(unknown_indices))))
+
+def find_highest_expected_value(matrix):
+    flat_matrix = [item for sublist in matrix for item in sublist]
+    unknown_indices = [i for i, x in enumerate(flat_matrix) if x == 'x']
+    available_numbers = [num for num in range(1, 10) if num not in flat_matrix]
+    combinations = [
+        [0, 1, 2],  # row1
+        [3, 4, 5],  # row2
+        [6, 7, 8],  # row3
+        [0, 3, 6],  # col1
+        [1, 4, 7],  # col2
+        [2, 5, 8],  # col3
+        [0, 4, 8],  # ldiag
+        [2, 4, 6]   # rdiag
+    ]
+    
+    expected_values = {}
+    for i, combo in enumerate(combinations):
+        combination = [flat_matrix[index] for index in combo]
+        expected_values[i] = calculate_expected_value(combination, [j for j, val in enumerate(combo) if flat_matrix[val] == 'x'], available_numbers)
+    
+    max_key = max(expected_values, key=expected_values.get)
+    max_value = expected_values[max_key]
+    
+    return combinations[max_key], max_value
+
+def get_matrix_input():
+    matrix = []
+    for i in range(3):
+        row = input(f"enter row {i+1} (separate numbers by space, use 'x' for blank/unknown): ").split()
+        row = [int(x) if x != 'x' else 'x' for x in row]
+        matrix.append(row)
+    return matrix
+
+def main():
+    matrix = get_matrix_input()
+    combination, expected_value = find_highest_expected_value(matrix)
+    print(f"best choice = {combination} with ev = {expected_value}")
+
+if __name__ == "__main__":
+    main()
