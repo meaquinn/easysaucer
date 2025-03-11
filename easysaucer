@@ -62,12 +62,13 @@ def find_highest_expected_value(matrix):
 def get_matrix_input():
     matrix = []
     for i in range(3):
-        row = input(f"enter row {i+1} (separate numbers by space, use 'x' for blank/unknown): ").split()
+        row = input(f"enter row {i+1}: ").split()
         row = [int(x) if x != 'x' else 'x' for x in row]
         matrix.append(row)
     return matrix
 
 def main():
+    print("separate numbers by space, use 'x' for blank/unknown)")
     matrix = get_matrix_input()
     combination, expected_value = find_highest_expected_value(matrix)
     print(f"best choice = {combination} with ev = {expected_value}")
